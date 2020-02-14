@@ -17,6 +17,8 @@ class Cliente(models.Model):
 
     def __str__(self):
         return self.ts_nombre
+    
+
 
 class Tipo_subcripcion(models.Model):
     ts_id = models.AutoField(primary_key=True)
@@ -29,6 +31,10 @@ class Tipo_subcripcion(models.Model):
 
     def __str__(self):
         return self.ts_nombre
+    
+    class Meta():
+        verbose_name_plural = "Tipo de subcripciones"
+        verbose_name = "Tipo de subcripción"
 
 class Subcription(models.Model):
     sub_id = models.BigAutoField(primary_key=True)
@@ -43,13 +49,21 @@ class Subcription(models.Model):
 
     def __str__(self):
         return str(self.sub_id)
+    
+    class Meta():
+        verbose_name_plural = "Subcripciones"
+        verbose_name = "Subcripción"
 
 class Type_Payment(models.Model):
     tpy_id = models.BigAutoField(primary_key=True)
     tpy_name=models.CharField("Nombre", max_length=150)
     tpy_descroption=models.CharField("Descripción", max_length=300)
     def __str__(self):
-        self.tpy_name
+        return str(self.tpy_name)
+    
+    class Meta():
+        verbose_name_plural = "Tipo de pagos"
+        verbose_name = "Tipo pago"
 
 class Orden(models.Model):
     ord_id = models.BigAutoField(primary_key=True)
@@ -66,7 +80,11 @@ class Orden(models.Model):
     ord_actualizado=models.DateTimeField("Actualizado", auto_now=True)
 
     def __str__(self):
-        str(self.ord_id)
+        return str(self.ord_id)
+    
+    class Meta():
+        verbose_name_plural = "Ordenes"
+        verbose_name = "Orden"
 
 
 
