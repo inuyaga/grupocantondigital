@@ -80,10 +80,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'grupocantondigital',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'USER': 'esteban',
+        'PASSWORD': 'S1st3m45',
         'HOST': 'localhost',
-        'PORT': '8889',
+        'PORT': '3306',
     }
 }
 

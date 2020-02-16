@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 Usuario = get_user_model()
-STATUS_SUBCRITION=((1, "ACTIVO"), (2, "INACTIVO"))
+STATUS_SUBSCRITION=((1, "ACTIVO"), (2, "INACTIVO"))
 STATUS_CLIENT=((1, "ACTIVO"), (2, "INACTIVO"))
 STATUS_PAGO=((1, "PENDIENTE"), (2, "APROBADO"))
     
