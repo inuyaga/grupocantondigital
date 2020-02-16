@@ -4,26 +4,15 @@ Usuario = get_user_model()
 STATUS_SUBCRITION=((1, "ACTIVO"), (2, "INACTIVO"))
 STATUS_CLIENT=((1, "ACTIVO"), (2, "INACTIVO"))
 STATUS_PAGO=((1, "PENDIENTE"), (2, "APROBADO"))
-
-class Cliente(models.Model):
-    client_id = models.AutoField(primary_key=True)
-    client_conekta_id = models.CharField(verbose_name="ID Conekta", max_length=255)
-    client_status=models.IntegerField("Status Cliente", choices=STATUS_CLIENT)
-    client_user=models.ForeignKey(Usuario, null=False, blank=False, on_delete=models.CASCADE, verbose_name="Usuario")
-    client_creado=models.DateTimeField("Creado",auto_now_add=True)
-    client_actualizado=models.DateTimeField("Actualizado", auto_now=True)
-
-    def __str__(self):
-        return str(self.client_user)
-    class Meta():
-        verbose_name_plural = "1.- Clientes"
-        verbose_name = "Cliente"
     
 class CaracteristicaSubcripcion(models.Model):
     cs_id = models.AutoField(primary_key=True)
     cs_descripcion = models.CharField("Descripción", max_length=250)
     def __str__(self):
         return self.cs_descripcion
+    class Meta():
+        verbose_name_plural = "1.- Caracteristicas de subcripcion"
+        verbose_name = "Caracteristicas subcripción"
 
 
 class Tipo_subcripcion(models.Model):
@@ -59,32 +48,13 @@ class Type_Payment(models.Model):
         verbose_name_plural = "3.- Tipo de pagos"
         verbose_name = "Tipo pago"
 
-class Subcription(models.Model):
-    sub_id = models.BigAutoField(primary_key=True)
-    sub_tip = models.ForeignKey(Tipo_subcripcion, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Tipo de subcripción")
-    sub_cliente = models.ForeignKey(Cliente, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Cliente")
-    sub_inicial=models.DateTimeField(verbose_name="Subcripción ncial")
-    sub_final=models.DateTimeField(verbose_name="Subcripción Final")
-    sub_status=models.IntegerField(choices=STATUS_SUBCRITION, default=2)
-    sub_token_cart=models.CharField(verbose_name="Token Cart", max_length=255)
-    sub_creado=models.DateTimeField(auto_now_add=True, verbose_name="Creado")
-    sub_actualizado=models.DateTimeField(auto_now=True, verbose_name="Actualizado")
-
-    def __str__(self):
-        return str(self.sub_id)
-    
-    class Meta():
-        verbose_name_plural = "4.- Subcripciones"
-        verbose_name = "Subcripción"
-
-
-
 class Orden(models.Model):
     ord_id = models.BigAutoField(primary_key=True)
+    ord_user=models.ForeignKey(Usuario, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Usuario")
     ord_payment=models.ForeignKey(Type_Payment, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Tipo pago")
-    ord_cliente=models.ForeignKey(Subcription, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Subcripción")
     ord_payment_status=models.IntegerField(verbose_name="Status de Pago", choices=STATUS_PAGO)
     ord_monto=models.FloatField("Monto")
+    ord_token_cart=models.CharField(verbose_name="Token Cart", max_length=255)
     ord_order_id=models.CharField("Orden ID", max_length=400)
     ord_charger_id=models.CharField("Charger ID", max_length=400)
     ord_referencia=models.CharField("Referencia", max_length=250)
@@ -96,10 +66,26 @@ class Orden(models.Model):
         return str(self.ord_id)
     
     class Meta():
-        verbose_name_plural = "5.- Ordenes"
+        verbose_name_plural = "4.- Ordenes"
         verbose_name = "Orden"
 
+class Subscription(models.Model):
+    sub_id = models.BigAutoField(primary_key=True)
+    sub_orden = models.ForeignKey(Orden, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Orden")
+    sub_tip = models.ForeignKey(Tipo_subcripcion, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Tipo de subscripción")
+    sub_inicial=models.DateTimeField(verbose_name="Subscripción ncial")
+    sub_final=models.DateTimeField(verbose_name="Subscripción Final")
+    sub_status=models.IntegerField(choices=STATUS_SUBSCRITION, default=2)
+    
+    sub_creado=models.DateTimeField(auto_now_add=True, verbose_name="Creado")
+    sub_actualizado=models.DateTimeField(auto_now=True, verbose_name="Actualizado")
 
+    def __str__(self):
+        return str(self.sub_id)
+    
+    class Meta():
+        verbose_name_plural = "5.- Subscripciones"
+        verbose_name = "Subscripción"
 
 
     
