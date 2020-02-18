@@ -4,6 +4,13 @@ Usuario = get_user_model()
 STATUS_SUBSCRITION=((1, "ACTIVO"), (2, "INACTIVO"))
 STATUS_CLIENT=((1, "ACTIVO"), (2, "INACTIVO"))
 STATUS_PAGO=((1, "PENDIENTE"), (2, "APROBADO"))
+
+class UserPaymentCard(models.Model):
+    spc_id=models.AutoField(primary_key=True)
+    spc_user=models.ForeignKey(Usuario, null=False, blank=False, on_delete=models.CASCADE, verbose_name="Usuario")
+    spc_token_id=models.CharField("Token card conekta", max_length=300)
+    def __str__(self):
+        return self.spc_token_id
     
 class CaracteristicaSubcripcion(models.Model):
     cs_id = models.AutoField(primary_key=True)
