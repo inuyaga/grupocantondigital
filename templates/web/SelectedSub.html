@@ -1,0 +1,76 @@
+{% extends 'base_contend.html' %}
+{% block titulo %}
+Selección | Grupo Canton
+{% endblock titulo %}
+
+
+{% block contenido %}
+<div class="site-section">
+    <div class="container">
+        <form action="" method="POST" id="card-form">
+            {% csrf_token %}
+            <span class="card-errors"></span>
+            <div>
+                <label>
+                    <span>Cardholder name</span>
+                    <input type="text" size="20" data-conekta="card[name]">
+                </label>
+            </div>
+            <div>
+                <label>
+                    <span>Card number</span>
+                    <input type="text" size="20" data-conekta="card[number]">
+                </label>
+            </div>
+            <div>
+                <label>
+                    <span>CVC</span>
+                    <input type="text" size="4" data-conekta="card[cvc]">
+                </label>
+            </div>
+            <div>
+                <label>
+                    <span>Expiration date (MM/YYYY)</span>
+                    <input type="text" size="2" data-conekta="card[exp_month]">
+                </label>
+                <span>/</span>
+                <input type="text" size="4" data-conekta="card[exp_year]">
+            </div>
+            <button type="submit">Create token</button>
+        </form>
+    </div>
+</div>
+{% endblock contenido %}
+
+
+{% block script %}
+<script type="text/javascript" src="https://cdn.conekta.io/js/latest/conekta.js"></script>
+<script type="text/javascript">
+    Conekta.setPublicKey('key_DEqxeDVx4tRMXwTWsxdrmNQ');
+
+
+    var conektaSuccessResponseHandler = function (token) {
+        var $form = $("#card-form");
+        //Add the token_id in the form
+        $form.append($('<input type="hidden" name="conektaTokenId" id="conektaTokenId">').val(token.id));
+        $form.get(0).submit(); //Submit
+    };
+    var conektaErrorResponseHandler = function (response) {
+        var $form = $("#card-form");
+        $form.find(".card-errors").text(response.message_to_purchaser);
+        $form.find("button").prop("disabled", false);
+    };
+
+
+    //jQuery generate the token on submit.
+    $(function () {
+        $("#card-form").submit(function (event) {
+            var $form = $(this);
+            // Prevents double clic
+            $form.find("button").prop("disabled", true);
+            Conekta.Token.create($form, conektaSuccessResponseHandler, conektaErrorResponseHandler);
+            return false;
+        });
+    });
+</script>
+{% endblock script %}

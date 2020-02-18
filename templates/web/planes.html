@@ -58,7 +58,7 @@
               </ul>
               <div class="price-cta">
                 <strong class="price">${{item.ts_precio}}/{{item.get_ts_tiempo_display}}</strong>
-                <p><a href="#" class="btn btn-white">Elegir</a></p>
+                <p><a href="{% url 'web:select_plan' item.ts_id%}" class="btn btn-white">Elegir</a></p>
               </div>
             </div>
           </div>
