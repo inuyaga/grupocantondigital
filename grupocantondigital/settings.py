@@ -27,11 +27,12 @@ SECRET_KEY = 'ol2e*d6zm!9n%x5omrzad4o2yflli2*9g#(j8%zyzx7k8j9#xc'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ALLOWED_HOSTS = ['f31e39c9.ngrok.io', 'localhost']
 ALLOWED_HOSTS = []
 
 
 # Application definition
-
+X_FRAME_OPTIONS = 'ALLOWALL'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,10 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app.usuario',
     'app.web',
     'conekta',
+    'django_cleanup.apps.CleanupConfig',
 ]
-
+AUTH_USER_MODEL = 'usuario.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

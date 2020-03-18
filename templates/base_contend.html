@@ -5,11 +5,11 @@
 <head>
   <meta charset="utf-8">
   <title>
-      
-      {% block titulo %}
-          Grupo Canton Digital
-      {% endblock titulo %}
-          
+
+    {% block titulo %}
+    Grupo Canton Digital
+    {% endblock titulo %}
+
   </title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta content="" name="keywords">
@@ -41,6 +41,12 @@
     Author: BootstrapMade.com
     Author URL: https://bootstrapmade.com/
   ======================================================= -->
+
+  
+  {% block linkhead %}
+    
+  {% endblock linkhead %}
+    
 </head>
 
 <body>
@@ -48,7 +54,7 @@
   <div class="site-wrap">
 
 
-    {% block nabvar %}     
+    {% block nabvar %}
     <div class="site-mobile-menu site-navbar-target">
       <div class="site-mobile-menu-header">
         <div class="site-mobile-menu-close mt-3">
@@ -58,8 +64,8 @@
       <div class="site-mobile-menu-body"></div>
     </div>
 
-    
-      
+
+
 
     <header class="site-navbar js-sticky-header site-navbar-target" role="banner">
 
@@ -67,20 +73,28 @@
         <div class="row align-items-center">
 
           <div class="col-6 col-lg-2">
-            <h1 class="mb-0 site-logo"><a href="{% url 'web:inicio' %}" class="mb-0"><img src="{% static 'img/new_logo.png' %}" width="70px" height="70px" alt=""></a></h1>
-            
+            <h1 class="mb-0 site-logo"><a href="{% url 'web:inicio' %}" class="mb-0"><img
+                  src="{% static 'img/new_logo.png' %}" width="70px" height="70px" alt=""></a></h1>
+
           </div>
 
           <div class="col-12 col-md-10 d-none d-lg-block">
             <nav class="site-navigation position-relative text-right" role="navigation">
               {% url 'web:inicio' as url_site %}
               <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
-                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:inicio' %}" class="nav-link">Inicio</a></li>
+                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:inicio' %}"
+                    class="nav-link">Inicio</a></li>
                 {% url 'web:planes' as url_site %}
-                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:planes' %}" class="nav-link">Planes</a></li>
-                
+                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:planes' %}"
+                    class="nav-link">Planes</a></li>
 
-                
+
+                {% url 'web:ediciones' as url_site %}
+                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:ediciones' %}"
+                    class="nav-link">Prensa digital</a></li>
+
+
+
                 {% if user.is_authenticated %}
                 <li class="has-children">
                   <a href="#" class="nav-link">{{user}}</a>
@@ -88,18 +102,22 @@
                     {% if user.is_staff %}
                     <li><a href="{% url 'admin:index' %}" class="nav-link">Admin Panel</a></li>
                     {% endif %}
+                    <li><a href="{% url 'web:referencias' %}" class="nav-link">Periodico digital</a></li>
+                    <li><a href="{% url 'web:referencias' %}" class="nav-link">Referencias</a></li>
                     <li><a href="{% url 'web:logout' %}" class="nav-link">Salir</a></li>
                   </ul>
                 </li>
                 {% else %}
                 {% url 'web:registro' as url_site %}
-                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:registro' %}" class="nav-link">Registrar</a></li>
+                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:registro' %}"
+                    class="nav-link">Registrar</a></li>
                 {% url 'web:login' as url_site %}
-                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:login' %}" class="nav-link">Iniciar sesion</a></li>
+                <li class="{% if request.path == url_site %}active{% endif %}"><a href="{% url 'web:login' %}"
+                    class="nav-link">Iniciar sesion</a></li>
                 {% endif %}
-                  
-                
-               
+
+
+
               </ul>
             </nav>
           </div>
@@ -122,16 +140,17 @@
 
 
     <main id="main">
-    {% block contenido %}
-            
-        
-    {% endblock contenido %}
+      
+      {% block contenido %}
+
+
+      {% endblock contenido %}
     </main>
-    
+
     {% block footer %}
-        
-    
-        
+
+
+
     <footer class="footer" role="contentinfo">
       <div class="container">
         <div class="row">
@@ -213,11 +232,11 @@
   <!-- Template Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
 
-  
+
   {% block script %}
-      
+
   {% endblock script %}
-      
+
 
 </body>
 

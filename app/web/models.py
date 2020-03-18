@@ -1,16 +1,18 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-Usuario = get_user_model()
-STATUS_SUBSCRITION=((1, "ACTIVO"), (2, "INACTIVO"))
-STATUS_CLIENT=((1, "ACTIVO"), (2, "INACTIVO"))
-STATUS_PAGO=((1, "PENDIENTE"), (2, "APROBADO"))
+from app.usuario.models import User as Usuario
+from django.core.validators import FileExtensionValidator
+STATUS=(
+    ('pending_payment', "Pago pendiente"), 
+    ('declined', "Rechazada"),
+    ('expired', "Caducado"),
+    ('paid', "Pagado"),
+    ('refunded', "reintegrado"),
+    ('partially_refunded', "reintegrado parcialmente"),
+    ('charged_back', "charged_back"),
+    ('pre_authorized', "pre autorizado"),
+    ('voided', "anulado"),
+    )
 
-class UserPaymentCard(models.Model):
-    spc_id=models.AutoField(primary_key=True)
-    spc_user=models.ForeignKey(Usuario, null=False, blank=False, on_delete=models.CASCADE, verbose_name="Usuario")
-    spc_token_id=models.CharField("Token card conekta", max_length=300)
-    def __str__(self):
-        return self.spc_token_id
     
 class CaracteristicaSubcripcion(models.Model):
     cs_id = models.AutoField(primary_key=True)
@@ -27,11 +29,10 @@ class Tipo_subcripcion(models.Model):
     ts_nombre = models.CharField(max_length=150, verbose_name="Nombre de subcripción")
     ts_descripcion = models.CharField(max_length=150, verbose_name="Brebe descripción")
     ts_precio=models.FloatField(verbose_name="Precio")
-    ts_token=models.CharField(max_length=100, verbose_name="Token subcripción")
     ts_activo=models.BooleanField(verbose_name="Activar")
     POPULAR=(('popular', 'Mas popular'), ('No', 'No'))
     ts_most_popular = models.CharField("Popular", max_length=10, choices=POPULAR)
-    TIEMPO=((1, 'Mensual'), (2, 'Trimestral'), (3, 'Semestral'), (4, 'Anual'))
+    TIEMPO=((30, 'Mensual'), (90, 'Trimestral'), (180, 'Semestral'), (365, 'Anual'))
     ts_tiempo = models.IntegerField("Elegir tiempo", choices=TIEMPO, default=1)
     ts_creado=models.DateTimeField(auto_now_add=True)
     ts_actualizado=models.DateTimeField(auto_now=True)
@@ -44,29 +45,21 @@ class Tipo_subcripcion(models.Model):
         verbose_name_plural = "2.- Tipo de subcripciones"
         verbose_name = "Tipo de subcripción"
 
-class Type_Payment(models.Model):
-    tpy_id = models.BigAutoField(primary_key=True)
-    tpy_name=models.CharField("Nombre", max_length=150)
-    tpy_description=models.CharField("Descripción", max_length=300)
-    def __str__(self):
-        return str(self.tpy_name)
-    
-    class Meta():
-        verbose_name_plural = "3.- Tipo de pagos"
-        verbose_name = "Tipo pago"
+
 
 class Orden(models.Model):
     ord_id = models.BigAutoField(primary_key=True)
-    ord_user=models.ForeignKey(Usuario, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Usuario")
-    ord_payment=models.ForeignKey(Type_Payment, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Tipo pago")
-    ord_payment_status=models.IntegerField(verbose_name="Status de Pago", choices=STATUS_PAGO)
+    ord_user=models.ForeignKey(Usuario, null=False, blank=False, on_delete=models.CASCADE, verbose_name="Usuario")
+    ord_tipo_sub=models.ForeignKey(Tipo_subcripcion, null=False, blank=False, on_delete=models.CASCADE, verbose_name="Tipo subcripcion")
+    ord_payment_status=models.CharField(max_length=80,verbose_name="Status de Pago", choices=STATUS)
     ord_monto=models.FloatField("Monto")
-    ord_token_cart=models.CharField(verbose_name="Token Cart", max_length=255)
     ord_order_id=models.CharField("Orden ID", max_length=400)
     ord_charger_id=models.CharField("Charger ID", max_length=400)
     ord_referencia=models.CharField("Referencia", max_length=250)
+    ord_barcode_url=models.CharField("Codigo de barras", max_length=500, blank=True, null=True)
     ord_expira_en= models.DateTimeField("Orden espira en")
     ord_creado=models.DateTimeField("Creado", auto_now_add=True)
+    ord_type_cargo = models.CharField(max_length=60, verbose_name="Tipo de cargo", default="N/A")
     ord_actualizado=models.DateTimeField("Actualizado", auto_now=True)
 
     def __str__(self):
@@ -76,16 +69,17 @@ class Orden(models.Model):
         verbose_name_plural = "4.- Ordenes"
         verbose_name = "Orden"
 
+
+
+
 class Subscription(models.Model):
     sub_id = models.BigAutoField(primary_key=True)
     sub_orden = models.ForeignKey(Orden, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Orden")
-    sub_tip = models.ForeignKey(Tipo_subcripcion, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Tipo de subscripción")
     sub_inicial=models.DateTimeField(verbose_name="Subscripción ncial")
     sub_final=models.DateTimeField(verbose_name="Subscripción Final")
-    sub_status=models.IntegerField(choices=STATUS_SUBSCRITION, default=2)
-    
     sub_creado=models.DateTimeField(auto_now_add=True, verbose_name="Creado")
     sub_actualizado=models.DateTimeField(auto_now=True, verbose_name="Actualizado")
+    sub_status=models.BooleanField(verbose_name="Estatus", default=0)
 
     def __str__(self):
         return str(self.sub_id)
@@ -100,3 +94,22 @@ class Subscription(models.Model):
 
 
 
+class Diario(models.Model): 
+    do_nombre = models.CharField(max_length=100, verbose_name="Nombre")
+    do_fecha_creacion=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.do_nombre
+
+
+class Edicion(models.Model):
+    ed_doc_pdf = models.FileField(verbose_name="PDF", upload_to="ediciones_pdf/", validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
+    ed_portada = models.ImageField(verbose_name="Portada de la edicion", upload_to="portadas_ediciones")
+    ed_creacion = models.DateField(auto_now_add=True)
+    ed_fecha_publicacion = models.DateField(verbose_name="Feha de publicación")
+    ed_pertene_diario = models.ForeignKey(Diario, on_delete=models.CASCADE, verbose_name="Pertenece al diario")
+
+    def __str__(self):
+        return str(self.ed_doc_pdf)
+
+    class Meta:
+        unique_together = ['ed_creacion', 'ed_pertene_diario']
