@@ -105,11 +105,11 @@ class Edicion(models.Model):
     ed_doc_pdf = models.FileField(verbose_name="PDF", upload_to="ediciones_pdf/", validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
     ed_portada = models.ImageField(verbose_name="Portada de la edicion", upload_to="portadas_ediciones")
     ed_creacion = models.DateField(auto_now_add=True)
-    ed_fecha_publicacion = models.DateField(verbose_name="Feha de publicación")
+    ed_fecha_publicacion = models.DateTimeField(verbose_name="Feha de publicación")
     ed_pertene_diario = models.ForeignKey(Diario, on_delete=models.CASCADE, verbose_name="Pertenece al diario")
 
     def __str__(self):
         return str(self.ed_doc_pdf)
 
-    class Meta:
-        unique_together = ['ed_creacion', 'ed_pertene_diario']
+    # class Meta:
+    #     unique_together = ['ed_fecha_publicacion', 'ed_pertene_diario'] 

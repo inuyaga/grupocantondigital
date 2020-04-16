@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 import os
 import conekta
 from django.shortcuts import render, redirect
-from app.web.models import Tipo_subcripcion, Orden, Edicion, Subscription
+from app.web.models import Tipo_subcripcion, Orden, Edicion, Subscription, Diario
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, CreateView, View, ListView, DetailView
 from django.contrib.auth.views import LoginView, LogoutView
@@ -422,13 +422,14 @@ class PrensaDigitalView(ListView):
     def get_queryset(self):
 
         queryset = super().get_queryset()
-        queryset = queryset.filter(
-            ed_fecha_publicacion=datetime.now()).order_by('ed_pertene_diario')
-        print(datetime.now())
+        ahora = datetime.now()
+        date_init = datetime(ahora.year, ahora.month, ahora.day, 00, 00, 00, 00000)
+        queryset = queryset.filter(ed_fecha_publicacion__range=[date_init, ahora]).order_by('ed_fecha_publicacion')
+        print(ahora)
         return queryset
 
 
-class ReaderNew(DetailView):
+class ReaderNew(DetailView): 
     model = Edicion
     template_name = "web/read_new.html"
 
@@ -455,3 +456,5 @@ class ReaderNew(DetailView):
         return context
     
     
+class MiCuentaView(TemplateView):
+    template_name = "web/micuenta.html" 

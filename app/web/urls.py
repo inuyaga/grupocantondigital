@@ -18,4 +18,5 @@ urlpatterns = [
 
     path('grupocanto/digital/prensa/', WebView.PrensaDigitalView.as_view(), name="ediciones"),
     path('grupocanto/digital/prensa/paper-read/slug-reder-1212<int:pk>98765-info-canton/', WebView.ReaderNew.as_view(), name="reder_paper"),
+    path('grupocanto/cuenta/detalle/', WebView.MiCuentaView.as_view(), name="mi_cuenta"),
 ]
